@@ -1,5 +1,7 @@
 package _02_File_Encrypt_Decrypt;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Base64;
 
 import javax.swing.JOptionPane;
@@ -10,8 +12,17 @@ public class FileEncryptor {
 	}
 
 	public FileEncryptor() {
-		String userIn = JOptionPane.showInputDialog("Input message to encrypt here");
-		encrypt(userIn);
+		String userIn = "";
+		try {
+		userIn = JOptionPane.showInputDialog("Input message to encrypt here. \nNOTE: This action will delete any previous text.");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(!userIn.isEmpty()) {
+		String encryptedMessage = encrypt(userIn);
+		FileRecorder(encryptedMessage);
+		}
+
 	}
 
 	// Create a program that takes a message from the user.
@@ -19,43 +30,53 @@ public class FileEncryptor {
 	// an encrypted form of the message to a file
 	public String encrypt(String input) {
 		String encryptedInput = "";
+		int i = 0;
 		for (char ch : input.toCharArray()) {
-			// System.out.println(c);
 			char addit;
 			char[] encC = null;
-			System.out.println(Character.getNumericValue(ch) + 10);
-			//System.out.println(Character.toChars(Character.getNumericValue(ch) + 10));
-			/**Conversion BACK to chars isn't working*/
-			/*if (Character.getNumericValue(ch) >= 33 && Character.getNumericValue(ch) <= 126) {
-				if (Character.getNumericValue(ch) + 10 >= 126) {
-					encC = Character.toChars(Character.getNumericValue(ch) - 116);
-					System.out.println(Character.toChars(Character.getNumericValue(ch) - 116));
-					System.out.println("test");
+			try {
+				if (Character.isBmpCodePoint(ch)) {
+					int numVal = (int) ch;
+					// System.out.println(numVal);
+					encC = Character.toChars(numVal);
 
-				} else if (Character.getNumericValue(ch) + 10 <= 126 && Character.getNumericValue(ch) + 10 >= 33) {
-					encC = Character.toChars(Character.getNumericValue(ch) + 10);
-					System.out.println(Character.toChars(Character.getNumericValue(ch) + 10));
-					System.out.println("testtest");
+					if (numVal >= 33 && numVal <= 126) {
+						if (numVal + 10 >= 126) {
+							encC = Character.toChars(numVal - 116 + 33);
+							// System.out.println(encC);
+							// System.out.println("test1");
+
+						} else if (numVal + 10 <= 126 && numVal + 10 >= 33) {
+							encC = Character.toChars(numVal + 10);
+							// System.out.println(encC);
+							// System.out.println("testtest2");
+						}
+					}
+
+					encryptedInput = encryptedInput + encC[0];
+				} else {
+					throw new Exception();
 				}
-			}*/
-
-			int numVal = Character.getNumericValue(ch);
-			encryptedInput = encryptedInput + encC;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		System.out.println(encryptedInput);
 		return encryptedInput;
 
 	}
-}
 
-/*
- * class Utilities { /* This basic encryption scheme is called single-byte xor.
- * It takes a single // byte and uses exclusive-or on every character in the
- * String. / public static String encrypt(byte[] plaintext, byte key) { for (int
- * i = 0; i < plaintext.length; i++) { plaintext[i] = (byte) (plaintext[i] ^
- * key); } return Base64.getEncoder().encodeToString(plaintext); }
- * 
- * public static String decrypt(String cyphertext, byte key) { byte[] b =
- * Base64.getDecoder().decode(cyphertext); for (int i = 0; i < b.length; i++) {
- * b[i] = (byte) (b[i] ^ key); } return new String(b); } }
- */
+	public void FileRecorder(String UserInput) {
+		try {
+			FileWriter fw = new FileWriter(/* fileName */"src/_02_File_Encrypt_Decrypt/TestFile");
+
+			fw.write(UserInput);
+
+			fw.close();
+			System.out.println("done writing");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		/* }/ **/
+	}
+}

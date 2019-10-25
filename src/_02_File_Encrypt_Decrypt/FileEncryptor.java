@@ -30,9 +30,7 @@ public class FileEncryptor {
 	// an encrypted form of the message to a file
 	public String encrypt(String input) {
 		String encryptedInput = "";
-		int i = 0;
 		for (char ch : input.toCharArray()) {
-			char addit;
 			char[] encC = null;
 			try {
 				if (Character.isBmpCodePoint(ch)) {
@@ -46,7 +44,7 @@ public class FileEncryptor {
 							// System.out.println(encC);
 							// System.out.println("test1");
 
-						} else if (numVal + 10 <= 126 && numVal + 10 >= 33) {
+						} else if (numVal + 10 <= 127 && numVal + 10 >= 33) {
 							encC = Character.toChars(numVal + 10);
 							// System.out.println(encC);
 							// System.out.println("testtest2");

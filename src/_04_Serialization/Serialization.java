@@ -3,7 +3,7 @@ package _04_Serialization;
 import org.junit.Test;
 
 import java.io.*;
-
+import java.io.Serializable;
 import static org.junit.Assert.assertEquals;
 
 /*
@@ -27,36 +27,53 @@ public class Serialization {
 
 		// Construct a SaveData object and save it to a file
 		save(new SaveData(name, age));
-
+		System.out.println("///////////////////////////");
 		// Load the SaveData object from the file
-		SaveData loadedData = load();
-
+		SaveData loadedData = load();/////////////////////////////
+		System.out.println("///////////////////////////");
 		assertEquals(name, loadedData.name);
 		assertEquals(age, loadedData.age);
 	}
 
 	/*
-	 * One simple way to save a serializable object to a file is using a FileOutputStream
-	 * and ObjectOutputStream.
+	 * One simple way to save a serializable object to a file is using a
+	 * FileOutputStream and ObjectOutputStream.
 	 */
 	private static void save(SaveData data) {
-		try (FileOutputStream fos = new FileOutputStream(new File(DATA_FILE)); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+		try (FileOutputStream fos = new FileOutputStream(DATA_FILE);
+				ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			/*
+			 * FileOutputStream fos = new FileOutputStream(new File(DATA_FILE));
+			 * ObjectOutputStream oos = new ObjectOutputStream(fos);/
+			 **/
+
 			oos.writeObject(data);
+			System.out.println("success 1");
+			fos.close();
+
+			oos.close();
+
 		} catch (IOException e) {
+			System.out.println("fail 1");
 			e.printStackTrace();
 		}
 	}
 
 	private static SaveData load() {
-		try (FileInputStream fis = new FileInputStream(new File(DATA_FILE)); ObjectInputStream ois = new ObjectInputStream(fis)) {
+		try  {
+		FileInputStream fis = new FileInputStream(DATA_FILE) ;
+				ObjectInputStream ois = new ObjectInputStream(fis);
+			System.out.println("success 2");
 			return (SaveData) ois.readObject();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("fail 2");
+			//e.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException e) {
+			System.out.println("fail 2.1");
 			// This can occur if the object we read from the file is not
 			// an instance of any recognized class
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}

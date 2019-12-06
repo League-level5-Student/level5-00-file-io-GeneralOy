@@ -5,5 +5,6 @@ public class SavedPixels implements java.io.Serializable {
 
 	public SavedPixels(Pixel[][] inArray) {
 		this.pixelArray = inArray;
+		
 	}
 }

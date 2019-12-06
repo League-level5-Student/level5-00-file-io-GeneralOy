@@ -5,13 +5,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import _04_Serialization.SaveData;
+
 public class PixelArtMaker implements MouseListener, Serializable, ActionListener{
-	private static final String dataFile = "src/_05_Pixel_Art_Save_State/pixelsave.dat";
+	/**/private/**/ static /**/final/**/ String DATA_FILE = "src/_05_Pixel_Art_Save_State/pixelsave.dat";
 	private JFrame window;
 	private GridInputPanel gip;
 	private GridPanel gp;
@@ -59,6 +66,7 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 		System.out.println(csp.getSelectedColor());
 		gp.clickPixel(e.getX(), e.getY());
 		gp.repaint();
+		
 	}
 
 	@Override
@@ -73,15 +81,51 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 	public void mouseExited(MouseEvent e) {
 	}
 	
-	public static void save() {
-		
+	//CHECK SAVE - THROWS FAIL 1///////////////////////////////////////////////////////////////////////////////////////////
+	private static void save(SavedPixels data) {
+		try /**/(FileOutputStream fos = new FileOutputStream(DATA_FILE);
+				ObjectOutputStream oos = new ObjectOutputStream(fos))/**/ {
+			/*
+			  FileOutputStream fos = new FileOutputStream(new File(DATA_FILE));
+			  ObjectOutputStream oos = new ObjectOutputStream(fos);
+			 /***/
+
+			oos.writeObject(data);
+			System.out.println("success 1");
+			fos.close();
+
+			oos.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("fail 1");
+		}
+	}
+
+	private static SaveData load() {
+		try  {
+		FileInputStream fis = new FileInputStream(DATA_FILE) ;
+				ObjectInputStream ois = new ObjectInputStream(fis);
+			System.out.println("success 2");
+			return (SaveData) ois.readObject();
+		} catch (IOException e) {
+			System.out.println("fail 2");
+			//e.printStackTrace();
+			return null;
+		} catch (ClassNotFoundException e) {
+			System.out.println("fail 2.1");
+			// This can occur if the object we read from the file is not
+			// an instance of any recognized class
+			//e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("Save Image")) {
 			//System.out.println("SAVE");
-			
+			save(new SavedPixels(gp.pixelArray));
 		}
 		
 	}

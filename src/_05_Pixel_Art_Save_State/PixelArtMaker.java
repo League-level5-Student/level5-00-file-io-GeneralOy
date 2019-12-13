@@ -17,16 +17,16 @@ import javax.swing.JFrame;
 
 import _04_Serialization.SaveData;
 
-public class PixelArtMaker implements MouseListener, Serializable, ActionListener{
+public class PixelArtMaker implements MouseListener, Serializable, ActionListener {
 	/**/private/**/ static /**/final/**/ String DATA_FILE = "src/_05_Pixel_Art_Save_State/pixelsave.dat";
 	private JFrame window;
 	private GridInputPanel gip;
 	private GridPanel gp;
 	ColorSelectionPanel csp;
 	private JButton saveButton;
-	
+
 	public void start() {
-		gip = new GridInputPanel(this);	
+		gip = new GridInputPanel(this);
 		window = new JFrame("Pixel Art");
 		window.setLayout(new FlowLayout());
 		window.setResizable(false);
@@ -38,7 +38,9 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 	}
 
 	public void submitGridData(int w, int h, int r, int c) {
+		//SavedPixels save = load();
 		gp = new GridPanel(w, h, r, c);
+		//gp.pixelArray = save.pixelArray;
 		csp = new ColorSelectionPanel();
 		window.remove(gip);
 		window.add(gp);
@@ -51,7 +53,7 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 		window.add(saveButton);
 		window.pack();
 	}
-	
+
 	public static void main(String[] args) {
 		new PixelArtMaker().start();
 	}
@@ -66,7 +68,7 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 		System.out.println(csp.getSelectedColor());
 		gp.clickPixel(e.getX(), e.getY());
 		gp.repaint();
-		
+
 	}
 
 	@Override
@@ -80,17 +82,13 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
-	
-	//CHECK SAVE - THROWS FAIL 1///////////////////////////////////////////////////////////////////////////////////////////
-	private static void save(SavedPixels data) {
-		try /**/(FileOutputStream fos = new FileOutputStream(DATA_FILE);
-				ObjectOutputStream oos = new ObjectOutputStream(fos))/**/ {
-			/*
-			  FileOutputStream fos = new FileOutputStream(new File(DATA_FILE));
-			  ObjectOutputStream oos = new ObjectOutputStream(fos);
-			 /***/
 
-			oos.writeObject(data);
+	// CHECK SAVE - THROWS FAIL
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	private static void save(/**/SavedPixels pixIn/**/ /*String data/**/) {
+		try /**/ (FileOutputStream fos = new FileOutputStream(DATA_FILE);
+				ObjectOutputStream oos = new ObjectOutputStream(fos))/**/ {
+			oos.writeObject(pixIn);
 			System.out.println("success 1");
 			fos.close();
 
@@ -102,31 +100,32 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 		}
 	}
 
-	private static SaveData load() {
-		try  {
-		FileInputStream fis = new FileInputStream(DATA_FILE) ;
-				ObjectInputStream ois = new ObjectInputStream(fis);
+	private static SavedPixels load() {
+		try {
+			FileInputStream fis = new FileInputStream(DATA_FILE);
+			ObjectInputStream ois = new ObjectInputStream(fis);
 			System.out.println("success 2");
-			return (SaveData) ois.readObject();
+			return (SavedPixels) ois.readObject();
 		} catch (IOException e) {
 			System.out.println("fail 2");
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException e) {
 			System.out.println("fail 2.1");
 			// This can occur if the object we read from the file is not
 			// an instance of any recognized class
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getActionCommand().equals("Save Image")) {
-			//System.out.println("SAVE");
-			save(new SavedPixels(gp.pixelArray));
+		if (e.getActionCommand().equals("Save Image")) {
+			// System.out.println("SAVE");
+			Pixel inArr = gp.pixelArray[0][0];
+			save(/**/new SavedPixels(inArr)/*"Test"/**/);
 		}
-		
+
 	}
 }

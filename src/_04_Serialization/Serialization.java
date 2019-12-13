@@ -40,12 +40,12 @@ public class Serialization {
 	 * FileOutputStream and ObjectOutputStream.
 	 */
 	private static void save(SaveData data) {
-		try /**/(FileOutputStream fos = new FileOutputStream(DATA_FILE);
+		try /**/ (FileOutputStream fos = new FileOutputStream(DATA_FILE);
 				ObjectOutputStream oos = new ObjectOutputStream(fos))/**/ {
 			/*
-			  FileOutputStream fos = new FileOutputStream(new File(DATA_FILE));
-			  ObjectOutputStream oos = new ObjectOutputStream(fos);
-			 /***/
+			 * FileOutputStream fos = new FileOutputStream(new File(DATA_FILE));
+			 * ObjectOutputStream oos = new ObjectOutputStream(fos); /
+			 ***/
 
 			oos.writeObject(data);
 			System.out.println("success 1");
@@ -60,20 +60,20 @@ public class Serialization {
 	}
 
 	private static SaveData load() {
-		try  {
-		FileInputStream fis = new FileInputStream(DATA_FILE) ;
-				ObjectInputStream ois = new ObjectInputStream(fis);
+		try {
+			FileInputStream fis = new FileInputStream(DATA_FILE);
+			ObjectInputStream ois = new ObjectInputStream(fis);
 			System.out.println("success 2");
 			return (SaveData) ois.readObject();
 		} catch (IOException e) {
 			System.out.println("fail 2");
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException e) {
 			System.out.println("fail 2.1");
 			// This can occur if the object we read from the file is not
 			// an instance of any recognized class
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		}
 	}

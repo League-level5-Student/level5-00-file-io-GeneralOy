@@ -6,25 +6,32 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class GridInputPanel extends JPanel{
-	private static final long serialVersionUID = 1L;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
+public class GridInputPanel extends JPanel {
+	/**/private/**/ static /**/final/**/ String DATA_FILE = "src/_05_Pixel_Art_Save_State/pixelsave.dat";
+	//private static final long serialVersionUID = 1L;
 	private JTextField windowWidthField;
 	private JTextField windowHeightField;
 	private JTextField rowsField;
 	private JTextField colsField;
 	private JButton submitButton;
-			
+	private JButton loadButton;
 	PixelArtMaker pam;
-	
+
 	public GridInputPanel(PixelArtMaker pam) {
 		this.pam = pam;
-		
+
 		windowWidthField = new JTextField(5);
 		windowHeightField = new JTextField(5);
 		rowsField = new JTextField(5);
 		colsField = new JTextField(5);
 		submitButton = new JButton("Submit");
-		
+		loadButton = new JButton("Load");
+
 		add(new JLabel("screen width:"));
 		add(windowWidthField);
 		add(new JLabel("\tscreen height:"));
@@ -34,10 +41,11 @@ public class GridInputPanel extends JPanel{
 		add(new JLabel("\ttotal columns:"));
 		add(colsField);
 		add(submitButton);
-		
-		submitButton.addActionListener((e)->submit());
+		add(loadButton);
+		submitButton.addActionListener((e) -> submit());
+		loadButton.addActionListener((e) -> load());
 	}
-	
+
 	private void submit() {
 		boolean valid = false;
 		int w = -1;
@@ -49,24 +57,45 @@ public class GridInputPanel extends JPanel{
 			h = Integer.parseInt(windowHeightField.getText());
 			r = Integer.parseInt(rowsField.getText());
 			c = Integer.parseInt(colsField.getText());
-			
-			if(w <= 0 || h <= 0 || r <= 0 || c <= 0) {
+
+			if (w <= 0 || h <= 0 || r <= 0 || c <= 0) {
 				invalidateInput();
-			}else {
+			} else {
 				valid = true;
 			}
-		}catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			invalidateInput();
 		}
-		
-		if(valid) {
+
+		if (valid) {
 			pam.submitGridData(w, h, r, c);
 		}
 	}
-	
+
 	private void invalidateInput() {
 		JOptionPane.showMessageDialog(null, "Be sure all fields are complete with positive numbers.", "ERROR", 0);
 	}
 	
 	
-}
+	//////////////LOADvv
+	private static SavedPixels load() {
+			try {
+				FileInputStream fis = new FileInputStream(DATA_FILE);
+				ObjectInputStream ois = new ObjectInputStream(fis);
+				System.out.println("success 2");
+				return (SavedPixels) ois.readObject();
+			} catch (IOException e) {
+				System.out.println("fail 2");
+				// e.printStackTrace();
+				return null;
+			} catch (ClassNotFoundException e) {
+				System.out.println("fail 2.1");
+				// This can occur if the object we read from the file is not
+				// an instance of any recognized class
+				// e.printStackTrace();
+				return null;
+			}
+		}
+	}
+
+

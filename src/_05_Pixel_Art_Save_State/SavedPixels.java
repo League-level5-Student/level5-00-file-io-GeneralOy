@@ -1,10 +1,14 @@
 package _05_Pixel_Art_Save_State;
 
-public class SavedPixels implements java.io.Serializable {
-	Pixel[][] pixelArray;
+import java.io.Serializable;
 
-	public SavedPixels(Pixel[][] inArray) {
-		this.pixelArray = inArray;
-		
+public class SavedPixels implements java.io.Serializable {
+	public Pixel[][] pixelArray;
+	String Test;
+	public Pixel pix;
+	public SavedPixels(/**/Pixel in/*String test/**/) {
+		this.pix = in;
+		//this.Test = test;
+
 	}
 }

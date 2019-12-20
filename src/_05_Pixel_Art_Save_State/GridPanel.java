@@ -8,13 +8,12 @@ import javax.swing.JPanel;
 
 public class GridPanel extends JPanel {
 
-	//private static final long serialVersionUID = 1L;
 	private int windowWidth;
 	private int windowHeight;
 	private int pixelWidth;
 	private int pixelHeight;
-	private int rows;
-	private int cols;
+	public int rows;
+	public int cols;
 
 	/** 1. Create a 2D array of pixels. Do not initialize it yet. */
 	Pixel[][] pixelArray;
@@ -27,19 +26,20 @@ public class GridPanel extends JPanel {
 		this.rows = r;
 		this.cols = c;
 
-		this.pixelWidth = windowWidth / cols;
-		this.pixelHeight = windowHeight / rows;
+		this.setPixelWidth(windowWidth / cols);
+		this.setPixelHeight(windowHeight / rows);
 
 		color = Color.BLACK;
 
 		setPreferredSize(new Dimension(windowWidth, windowHeight));
 
 		/** 2. Initialize the pixel array using the rows and cols variables. */
-		pixelArray = new Pixel[w / this.rows][h / this.cols];
+		pixelArray = new Pixel[this.rows][this.cols];
 
 		/** 3. Iterate through the array and initialize each element to a new pixel. */
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.cols; j++) {
+				System.out.println(i + "," + j);
 				pixelArray[j][i] = new Pixel(j, i);
 			}
 		}
@@ -51,7 +51,7 @@ public class GridPanel extends JPanel {
 	}
 
 	public void clickPixel(int mouseX, int mouseY) {
-		pixelArray[mouseX / (windowHeight/rows)][mouseY / (windowWidth/cols)].color = this.color;
+		pixelArray[mouseX / (windowHeight / rows)][mouseY / (windowWidth / cols)].color = this.color;
 		/**
 		 * 5. Use the mouseX and mouseY variables to change the color // of the pixel
 		 * that was clicked. *HINT* Use the pixel's dimensions.
@@ -76,5 +76,21 @@ public class GridPanel extends JPanel {
 		 * pattern to your display.
 		 */
 
+	}
+
+	public int getPixelWidth() {
+		return pixelWidth;
+	}
+
+	public void setPixelWidth(int pixelWidth) {
+		this.pixelWidth = pixelWidth;
+	}
+
+	public int getPixelHeight() {
+		return pixelHeight;
+	}
+
+	public void setPixelHeight(int pixelHeight) {
+		this.pixelHeight = pixelHeight;
 	}
 }

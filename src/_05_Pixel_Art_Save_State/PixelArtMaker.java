@@ -14,16 +14,18 @@ import java.io.Serializable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import _04_Serialization.SaveData;
 
 public class PixelArtMaker implements MouseListener, Serializable, ActionListener {
-	/**/private/**/ static /**/final/**/ String DATA_FILE = "src/_05_Pixel_Art_Save_State/pixelsave.dat";
+	private static final String DATA_FILE = "src/_05_Pixel_Art_Save_State/pixelsave.dat";
 	private JFrame window;
 	private GridInputPanel gip;
 	private GridPanel gp;
 	ColorSelectionPanel csp;
 	private JButton saveButton;
+	public boolean loaded = false;
 
 	public void start() {
 		gip = new GridInputPanel(this);
@@ -38,9 +40,7 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 	}
 
 	public void submitGridData(int w, int h, int r, int c) {
-		//SavedPixels save = load();
 		gp = new GridPanel(w, h, r, c);
-		//gp.pixelArray = save.pixelArray;
 		csp = new ColorSelectionPanel();
 		window.remove(gip);
 		window.add(gp);
@@ -83,9 +83,7 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 	public void mouseExited(MouseEvent e) {
 	}
 
-	// CHECK SAVE - THROWS FAIL
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	private static void save(/**/SavedPixels pixIn/**/ /*String data/**/) {
+	private static void save(/**/SavedPixels pixIn/**/ /* String data/ **/) {
 		try /**/ (FileOutputStream fos = new FileOutputStream(DATA_FILE);
 				ObjectOutputStream oos = new ObjectOutputStream(fos))/**/ {
 			oos.writeObject(pixIn);
@@ -108,23 +106,34 @@ public class PixelArtMaker implements MouseListener, Serializable, ActionListene
 			return (SavedPixels) ois.readObject();
 		} catch (IOException e) {
 			System.out.println("fail 2");
-			// e.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException e) {
 			System.out.println("fail 2.1");
-			// This can occur if the object we read from the file is not
-			// an instance of any recognized class
-			// e.printStackTrace();
 			return null;
 		}
+	}
+
+	public void loadFromSave(SavedPixels sav) {
+		loaded = true;
+		submitGridData(sav.windowWidth, sav.windowHeight, sav.rows, sav.columns);
+		this.gp.pixelArray = sav.pixelArray;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Save Image")) {
-			// System.out.println("SAVE");
-			Pixel inArr = gp.pixelArray[0][0];
-			save(/**/new SavedPixels(inArr)/*"Test"/**/);
+			int opt = JOptionPane.showConfirmDialog(null, "Are you sure? Doing this will delete the previous save. \nSelect 'Yes' to continue. \nSelect 'No' to close program. \nSelect 'Cancel' to return to work.");
+			if (opt == 0) {
+				//YES
+				Pixel[][] inArr = gp.pixelArray;
+				save(new SavedPixels(inArr, gp.getWidth(), gp.getHeight(), gp.getPixelWidth(), gp.getPixelHeight(),
+						gp.rows, gp.cols));
+			} else if (opt == 1) {
+				//NO
+				System.exit(0);
+			} else if (opt == 2) {
+				//CANCEL
+			}
 		}
 
 	}
